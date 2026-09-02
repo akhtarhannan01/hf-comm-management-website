@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HF Communication | Repair Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="authScreen" class="auth-screen">
+    <div class="auth-card">
+      <div class="brand-icon">HF</div>
+      <h1>Welcome to the HF Communication</h1>
+      <p>Mobile Repair Management Dashboard</p>
+      <form id="authForm">
+        <label>Email</label>
+        <input id="email" type="email" placeholder="you@example.com" required />
+        <label>Password</label>
+        <input id="password" type="password" placeholder="Your password" required minlength="6" />
+        <button class="primary-btn" type="submit">Login</button>
+      </form>
+      <p id="authMessage" class="form-message"></p>
+      <p class="small-note">Create your first user in Supabase Authentication, then log in here.</p>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon small">HF</div>
+        <div><strong>HF Communication</strong><span>Repair Dashboard</span></div>
+      </div>
+      <nav>
+        <button class="nav-btn active" data-view="dashboard">⌂ Dashboard</button>
+        <button class="nav-btn" data-view="repairs">🔧 Active Repairs</button>
+        <button class="nav-btn" data-view="history">🕘 Repair History</button>
+      </nav>
+      <button id="logoutBtn" class="logout-btn">⇥ Logout</button>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <h1 id="pageTitle">Welcome to the HF Communication</h1>
+          <p id="todayText"></p>
+        </div>
+        <button id="addRepairBtn" class="primary-btn">+ Add New Repair</button>
+      </header>
+
+      <section id="dashboardView" class="view">
+        <div class="stats">
+          <article class="stat-card"><span>📱 Total Repairs</span><strong id="totalRepairs">0</strong></article>
+          <article class="stat-card neutral"><span>⏳ Pending</span><strong id="pendingCount">0</strong></article>
+          <article class="stat-card yellow"><span>🔧 Under Repair</span><strong id="repairingCount">0</strong></article>
+          <article class="stat-card green"><span>✓ Completed</span><strong id="completedCount">0</strong></article>
+          <article class="stat-card delivered-stat">
+  <span>📦 Delivered Phones</span>
+  <strong id="deliveredCount">0</strong>
+</article>
+        </div>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div><h2>Repair Overview</h2><p>Monitor all current repair jobs and delivery deadlines.</p></div>
+          </div>
+          <div class="controls">
+            <input id="searchInput" placeholder="Search customer, phone number, brand or model..." />
+            <select id="statusFilter">
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="repairing">Under Repair</option>
+              <option value="completed">Completed</option>
+              <option value="delivered">Delivered</option>
+              <option value="warning">Due within 1 hour</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
+          <div id="repairList" class="repair-grid"></div>
+        </section>
+      </section>
+
+      <section id="repairsView" class="view hidden">
+        <section class="panel">
+          <div class="panel-header"><div><h2>Active Repairs</h2><p>Pending, under repair, urgent and overdue jobs.</p></div></div>
+          <div id="activeRepairList" class="repair-grid"></div>
+        </section>
+      </section>
+
+      <section id="historyView" class="view hidden">
+        <section class="panel">
+          <div class="panel-header"><div><h2>Repair History</h2><p>Completed repair records.</p></div></div>
+          <div id="historyList" class="repair-grid"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="repairModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header"><div><h2 id="modalTitle">Add New Repair</h2><p>Create a repair job for a customer.</p></div><button class="icon-btn" id="closeModalBtn">×</button></div>
+      <form id="repairForm">
+        <input type="hidden" id="repairId" />
+        <div class="form-grid">
+          <div><label>Customer Name *</label><input id="customerName" required /></div>
+          <div><label>Customer Phone *</label><input id="customerPhone" type="tel" minlength="10" maxlength="10" required /></div>
+          <div><label>Phone Brand</label><input id="phoneBrand" placeholder="Apple, Samsung..." /></div>
+          <div><label>Phone Model</label><input id="phoneModel" placeholder="iPhone 13..." /></div>
+          <div class="full"><label>Repair Issue</label><textarea
+  id="repairIssue"
+  rows="4"
+  placeholder="Describe the problem..."
+></textarea>
+
+<datalist id="repairIssueSuggestions"></datalist></div>
+          <div><label>Estimated Price (₹)</label><input id="estimatedPrice" type="number" min="0" step="0.01" /></div>
+          <div><label>Status</label><select id="repairStatus"><option value="pending">Pending</option><option value="repairing">Under Repair</option><option value="completed">Completed</option></select></div>
+          <div><label>Promised Date</label><input id="promisedDate" type="date" /></div>
+          <div><label>Promised Time</label><input id="promisedTime" type="time" /></div>
+        </div>
+        <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelBtn">Cancel</button><button class="primary-btn" type="submit">Save Repair</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>

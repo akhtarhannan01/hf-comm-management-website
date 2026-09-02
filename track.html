@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Track Your Repair | HF Communication</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="tracking-page">
+
+```
+<div class="tracking-container">
+
+  <div class="tracking-logo">
+    HF
+  </div>
+
+  <h1>HF Communication</h1>
+
+  <p class="tracking-subtitle">
+    Track your mobile repair status
+  </p>
+
+
+  <div class="tracking-search">
+
+    <label for="trackingPhone">
+      Enter your mobile number
+    </label>
+
+    <div class="tracking-input-row">
+
+      <input
+        type="tel"
+        id="trackingPhone"
+        placeholder="Enter your phone number"
+        minlength="10"
+    maxlength="10" 
+    pattern="[0-9]{10}"
+      >
+
+      <button id="trackButton">
+        Track Repair
+      </button>
+
+    </div>
+
+    <p class="tracking-note">
+      Enter the same phone number given when submitting your device.
+    </p>
+
+  </div>
+
+
+  <div id="trackingResults"></div>
+
+</div>
+```
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+
+    const SUPABASE_URL = "https://vhwbnqohtrtyajzbqjxo.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_mMIQWRk0UMkrQJ0Nxlojig_o1KSoit1";
+
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+
+    const phoneInput =
+      document.getElementById("trackingPhone");
+
+    const trackButton =
+      document.getElementById("trackButton");
+
+    const results =
+      document.getElementById("trackingResults");
+
+
+    trackButton.addEventListener(
+      "click",
+      trackRepair
+    );
+
+
+    phoneInput.addEventListener(
+      "keydown",
+      function(event) {
+
+        if (event.key === "Enter") {
+
+          trackRepair();
+
+        }
+
+      }
+    );
+
+
+    async function trackRepair() {
+
+      const phone =
+        phoneInput.value.trim();
+
+
+      if (!phone) {
+
+        results.innerHTML = `
+          <div class="tracking-error">
+            Please enter your phone number.
+          </div>
+        `;
+
+        return;
+
+      }
+
+
+      results.innerHTML = `
+        <div class="tracking-loading">
+          Searching for your repair...
+        </div>
+      `;
+
+
+      const {
+        data,
+        error
+      } = await supabaseClient.rpc(
+        "track_repairs_by_phone",
+        {
+          search_phone: phone
+        }
+      );
+
+
+      if (error) {
+
+        results.innerHTML = `
+          <div class="tracking-error">
+            Unable to check repair status.
+            Please try again.
+          </div>
+        `;
+
+        console.error(error);
+
+        return;
+
+      }
+
+
+      if (!data || data.length === 0) {
+
+        results.innerHTML = `
+          <div class="tracking-error">
+            No repair found with this phone number.
+            Please check the number and try again.
+          </div>
+        `;
+
+        return;
+
+      }
+
+
+      results.innerHTML =
+        data.map(repair => {
+
+          return `
+
+            <div class="tracking-card">
+
+              <div class="tracking-status ${repair.status}">
+
+                ${getStatusText(repair.status)}
+
+              </div>
+
+
+              <h2>
+
+                📱
+                ${escapeHtml(
+                  repair.phone_brand || ""
+                )}
+
+                ${escapeHtml(
+                  repair.phone_model || ""
+                )}
+
+              </h2>
+
+
+              <div class="tracking-info">
+
+                <div>
+
+                  <span>
+                    🔧 Repair Status
+                  </span>
+
+                  <strong>
+                    ${getStatusText(repair.status)}
+                  </strong>
+
+                </div>
+
+
+                <div> <span> 🛠️ Repair Issue </span> <strong> ${escapeHtml( repair.repair_issue || "Not specified" )} </strong> </div>
+
+
+                <div>
+
+                  <span>
+                    📅 Promised Delivery
+                  </span>
+
+                  <strong>
+                    ${formatDateTime(
+                      repair.promised_date,
+                      repair.promised_time
+                    )}
+                  </strong>
+
+                </div>
+
+
+                <div>
+
+                  <span>
+                    💰 Estimated Cost
+                  </span>
+
+                  <strong>
+                    ₹${Number(
+                      repair.estimated_price || 0
+                    ).toLocaleString("en-IN")}
+                  </strong>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+
+    }
+
+
+    function getStatusText(status) {
+
+      const statuses = {
+
+        pending: "Pending",
+
+        repairing: "Under Repair",
+
+        completed: "Completed",
+
+        delivered: "Delivered"
+
+      };
+
+
+      return statuses[status] ||
+        status;
+
+
+    }
+
+
+    function formatDateTime(
+      date,
+      time
+    ) {
+
+      if (!date) {
+
+        return "Not specified";
+
+      }
+
+
+      const formattedDate =
+        new Date(
+          date + "T00:00:00"
+        ).toLocaleDateString(
+          "en-IN",
+          {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+          }
+        );
+
+
+      return formattedDate +
+        (
+          time
+            ? " at " +
+              time.slice(0, 5)
+            : ""
+        );
+
+
+    }
+
+
+    function escapeHtml(value) {
+
+      return String(value || "")
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+  </script>
+
+</body>
+</html>

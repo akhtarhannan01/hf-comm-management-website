@@ -261,3 +261,29 @@ width: 100%;
   background: rgba(255, 255, 255, 0.97) !important;
   color: #111827 !important;
 }
+/* Pending - Yellow */
+.tracking-card-pending {
+  border-left: 6px solid #f5c542;
+  background: #fffbea;
+}
+
+
+/* Under Repair - Blue */
+.tracking-card-repairing {
+  border-left: 6px solid #2196f3;
+  background: #eef7ff;
+}
+
+
+/* Completed - Green */
+.tracking-card-completed {
+  border-left: 6px solid #22c55e;
+  background: #effdf4;
+}
+
+
+/* Delivered - Blue */
+.tracking-card-delivered {
+  border-left: 6px solid #3b82f6;
+  background: #eff6ff;
+}

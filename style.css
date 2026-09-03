@@ -46,7 +46,7 @@
   padding: 40px 20px;
   position: relative;
 
-  background-image: url("../store.png");
+  background-image: url("../images/store.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -159,11 +159,11 @@ background: #fef3c7;
 }
 
 .tracking-status.completed {
-background: #dcfce7;
+background: #aaffc8;
 }
 
 .tracking-status.delivered {
-background: #dbeafe;
+background: #aacbf6;
 color: #1d4ed8;
 }
 
@@ -258,32 +258,29 @@ width: 100%;
 
 /* Results card */
 .tracking-card {
-  background: rgba(255, 255, 255, 0.97) !important;
-  color: #111827 !important;
+   border-left: 6px solid slategrey;
+  background: #ebedfbd7;
+  color: #111827;
 }
-/* Pending - Yellow */
-.tracking-card-pending {
-  border-left: 6px solid #f5c542;
-  background: #fffbea;
-}
-
 
 /* Under Repair - Blue */
 .tracking-card-repairing {
-  border-left: 6px solid #2196f3;
-  background: #eef7ff;
+  border-left: 6px solid #c6cc10;
+  background: #fef3c7;
 }
 
 
 /* Completed - Green */
 .tracking-card-completed {
   border-left: 6px solid #22c55e;
-  background: #effdf4;
+ background: #dcfce7;
+ color: #15803d;
 }
 
 
 /* Delivered - Blue */
 .tracking-card-delivered {
   border-left: 6px solid #3b82f6;
-  background: #eff6ff;
+  background: #dbeafe;
+  color: #1d4ed8;
 }

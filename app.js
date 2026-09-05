@@ -202,7 +202,7 @@ function renderAll() {
   updateRepairIssueSuggestions();
   const all = filtered();
   $("repairList").innerHTML = all.length ? all.map(card).join("") : empty("No repairs found.");
-  const active = repairs.filter(r=>r.status!=="completed");
+  const active = repairs.filter(r=>r.status!=="completed" && r.status !== "delivered");
   $("activeRepairList").innerHTML = active.length ? active.map(card).join("") : empty("No active repairs.");
   const history = repairs.filter(
   r =>

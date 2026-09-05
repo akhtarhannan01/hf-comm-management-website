@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin.html
+
+Sitemap: https://hf-communication.vercel.app/sitemap.xml
